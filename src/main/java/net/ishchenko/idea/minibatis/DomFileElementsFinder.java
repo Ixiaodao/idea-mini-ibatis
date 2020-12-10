@@ -2,17 +2,11 @@ package net.ishchenko.idea.minibatis;
 
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiIdentifier;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
-import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomService;
-import net.ishchenko.idea.minibatis.model.mapper.Mapper;
-import net.ishchenko.idea.minibatis.model.mapper.MapperIdentifiableStatement;
 import net.ishchenko.idea.minibatis.model.sqlmap.ResultMap;
 import net.ishchenko.idea.minibatis.model.sqlmap.SqlMap;
 import net.ishchenko.idea.minibatis.model.sqlmap.SqlMapIdentifiableStatement;
@@ -133,78 +127,10 @@ public class DomFileElementsFinder {
 
     }
 
-    public void processMappers(@NotNull final PsiClass clazz, @NotNull final Processor<? super Mapper> processor) {
-        application.runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                if (clazz.isInterface()) {
-                    PsiIdentifier nameIdentifier = clazz.getNameIdentifier();
-                    String qualifiedName = clazz.getQualifiedName();
-                    if (nameIdentifier != null && qualifiedName != null) {
-                        processMappers(qualifiedName, processor);
-                    }
-                }
-            }
-        });
-    }
-
-    public void processMapperStatements(@NotNull final PsiMethod method, @NotNull final Processor<? super MapperIdentifiableStatement> processor) {
-
-        application.runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                PsiClass clazz = method.getContainingClass();
-                if (clazz != null && clazz.isInterface()) {
-                    String qualifiedName = clazz.getQualifiedName();
-                    String methodName = method.getName();
-                    if (qualifiedName != null) {
-                        processMapperStatements(qualifiedName, methodName, processor);
-                    }
-                }
-            }
-        });
-
-    }
-
-    public boolean existsMapperStatement(PsiMethod method) {
-        CommonProcessors.FindFirstProcessor<DomElement> processor = new CommonProcessors.FindFirstProcessor<DomElement>();
-        processMapperStatements(method, processor);
-        return processor.isFound();
-    }
-
-    private void processMappers(String className, Processor<? super Mapper> processor) {
-        for (DomFileElement<Mapper> fileElement : findMapperFileElements()) {
-            Mapper mapper = fileElement.getRootElement();
-            if (className.equals(mapper.getNamespace().getRawText())) {
-                if (!processor.process(mapper)) {
-                    return;
-                }
-            }
-        }
-    }
-
-    private void processMapperStatements(String className, String methodName, Processor<? super MapperIdentifiableStatement> processor) {
-        for (DomFileElement<Mapper> fileElement : findMapperFileElements()) {
-            Mapper mapper = fileElement.getRootElement();
-            if (className.equals(mapper.getNamespace().getRawText())) {
-                for (MapperIdentifiableStatement statement : mapper.getIdentifiableStatements()) {
-                    if (methodName.equals(statement.getId().getRawText())) {
-                        if (!processor.process(statement)) {
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private List<DomFileElement<SqlMap>> findSqlMapFileElements() {
         return domService.getFileElements(SqlMap.class, project, GlobalSearchScope.allScope(project));
     }
 
-    private List<DomFileElement<Mapper>> findMapperFileElements() {
-        return domService.getFileElements(Mapper.class, project, GlobalSearchScope.allScope(project));
-    }
 }
 
 
