@@ -59,7 +59,7 @@ public class StatementDocumentationProvider implements DocumentationProvider {
                 SqlMapIdentifiableStatement statement = processor.getFoundValue();
                 XmlElement xmlElement = statement.getXmlElement();
                 if (xmlElement != null) {
-                    return "<pre>" + StringUtil.escapeXml(xmlElement.getText()) + "</pre>";
+                    return "<pre>" + StringUtil.escapeXmlEntities(xmlElement.getText()) + "</pre>";
                 }
             }
 
