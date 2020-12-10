@@ -84,11 +84,8 @@
         <psi.referenceContributor implementation="net.ishchenko.idea.minibatis.MyBatisReferenceContributor"/>
         <dom.fileDescription implementation="net.ishchenko.idea.minibatis.SqlMapDescription"/>
         <dom.fileDescription implementation="net.ishchenko.idea.minibatis.MapperDescription"/>
-        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="net.ishchenko.idea.minibatis.MyBatis3ProxiesLineMarkerProvider"/>
-        <definitionsSearch implementation="net.ishchenko.idea.minibatis.MyBatis3ProxiesDefinitionsSearcher"/>
         <projectService serviceImplementation="net.ishchenko.idea.minibatis.DomFileElementsFinder"/>
         <lang.documentationProvider language="JAVA" implementationClass="net.ishchenko.idea.minibatis.StatementDocumentationProvider"/>
-        <inspectionToolProvider implementation="net.ishchenko.idea.minibatis.MyBatisInspectionToolsProvider"/>
         <qualifiedNameProvider implementation="net.ishchenko.idea.minibatis.IdentifiableStatementQualifiedNameProvider"/>
         <callHierarchyProvider language="XML" implementationClass="net.ishchenko.idea.minibatis.IdentifiableStatementHierarchyProvider"/>
         <gotoSymbolContributor implementation="net.ishchenko.idea.minibatis.GoToSqlMapStatementContributor"/>
