@@ -7,8 +7,7 @@
     <idea-version since-build="103.255"/>
 
     <description><![CDATA[
-        Simple iBATIS/MyBatis plugin <br>
-        Contains essential features only, no datasource integration (yet)<br>
+        Simple iBATIS plugin <br>
         Works for IDEA >= 10.0.3
     ]]>
     </description>
@@ -16,65 +15,7 @@
     <change-notes>
         <![CDATA[
         <ul>
-            1.14
-            <!--TBD-->
-        </ul>
-        <ul> 1.13
             <li>Find Usages of Spring beans exception fixed</li>
-        </ul>
-        <ul> 1.12
-            <li>Call Hierarchy support for sqlMap statements</li>
-        </ul>
-        <ul> 1.11
-            <li>Fixed ClassCastException for groovy strings</li>
-            <li>Copy Reference support for sqlMap statements</li>
-        </ul>
-        <ul> 1.10
-            <li>Not fully qualified statement names support</li>
-            <li>Red circle of death fixed when you had some empty namespaces and invoked auto completion</li>
-        </ul>
-        <ul> 1.9
-            <li>Multiple dots in fully qualified statement name support</li>
-            <li>Any string literal is a reference now</li>
-            <li>Computing concatenations for literals</li>
-            <li>Better File Structure popup presentation</li>
-        </ul>
-        <ul> 1.8
-            <li>Better mapper file navigation</li>
-            <li>Mapper method definition inspection</li>
-        </ul>
-        <ul> 1.7
-            <li>result resultMap attribute support</li>
-        </ul>
-        <ul> 1.6
-            <li>Occasional StringIndexOutOfBoundsException fixed</li>
-            <li>parameterMap attribute support</li>
-            <li>selectKey resultClass attribute support</li>
-        </ul>
-        <ul> 1.5
-            <li>Quick Documentation for statement names in Java code</li>
-        </ul>
-        <ul> 1.4
-            <li>Support for sqlMaps with no namespace attribute defined</li>
-            <li>Better sqlMap file navigation</li>
-        </ul>
-        <ul> 1.3
-            <li>Error on background mapper detection fixed</li>
-            <li>Resolving multiple statements with same namespace and id</li>
-        </ul>
-        <ul> 1.2
-            <li>include tags support</li>
-            <li>typeAlias support</li>
-            <li>MyBatis 3 proxies - Go to Implementation for proxy methods jumps right into xml declaration for the mapper method</li>
-            <li>Find Usages for sqlMap statements. Finds self-reference as well, that should be fixed</li>
-        </ul>
-        <ul> 1.1
-            <li>Showing clickable gutter icons for mapper interface and their methods, no Go to Implementation hotkey support yet</li>
-            <li>Searching for sqlMaps and mappers in libraries as well</li>
-        </ul>
-        <ul> 1.0
-            <li>Go to Declaration for string literals in method arguments</li>
-            <li>Autocompletion of statement names in string literals in method arguments</li>
         </ul>
         ]]>
     </change-notes>
@@ -83,7 +24,6 @@
 
         <psi.referenceContributor implementation="net.ishchenko.idea.minibatis.MyBatisReferenceContributor"/>
         <dom.fileDescription implementation="net.ishchenko.idea.minibatis.SqlMapDescription"/>
-        <dom.fileDescription implementation="net.ishchenko.idea.minibatis.MapperDescription"/>
         <projectService serviceImplementation="net.ishchenko.idea.minibatis.DomFileElementsFinder"/>
         <lang.documentationProvider language="JAVA" implementationClass="net.ishchenko.idea.minibatis.StatementDocumentationProvider"/>
         <qualifiedNameProvider implementation="net.ishchenko.idea.minibatis.IdentifiableStatementQualifiedNameProvider"/>
