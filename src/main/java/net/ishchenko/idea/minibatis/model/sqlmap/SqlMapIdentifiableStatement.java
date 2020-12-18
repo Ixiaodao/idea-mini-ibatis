@@ -2,10 +2,12 @@ package net.ishchenko.idea.minibatis.model.sqlmap;
 
 
 import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.NameValue;
 import com.intellij.util.xml.SubTagList;
+import net.ishchenko.idea.minibatis.converter.AliasConverter;
 
 import java.util.List;
 
@@ -22,9 +24,15 @@ public interface SqlMapIdentifiableStatement extends DomElement {
     GenericAttributeValue<String> getId();
 
     @Attribute("parameterClass")
+    @Convert(AliasConverter.class)
     GenericAttributeValue<TypeAlias> getParameterClass();
 
+    @Attribute("resultClass")
+    @Convert(AliasConverter.class)
+    GenericAttributeValue<TypeAlias> getResultClass();
+
     @Attribute("parameterMap")
+    @Convert(AliasConverter.class)
     GenericAttributeValue<ParameterMap> getParameterMap();
 
     @SubTagList("include")

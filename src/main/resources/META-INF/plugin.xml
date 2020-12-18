@@ -4,18 +4,16 @@
         <name>Ibatis mini-plugin</name>
     <version>1.14</version>
     <vendor>Max Ishchenko</vendor>
-    <idea-version since-build="103.255"/>
 
     <description><![CDATA[
-        Simple iBATIS plugin <br>
-        Works for IDEA >= 10.0.3
+       从java跳转xml，从xml跳转java，支持别名跳转
     ]]>
     </description>
 
     <change-notes>
         <![CDATA[
         <ul>
-            <li>Find Usages of Spring beans exception fixed</li>
+            <li>支持了2020.2.3</li>
         </ul>
         ]]>
     </change-notes>
@@ -25,6 +23,7 @@
         <psi.referenceContributor implementation="net.ishchenko.idea.minibatis.MyBatisReferenceContributor"/>
         <dom.fileDescription implementation="net.ishchenko.idea.minibatis.SqlMapDescription"/>
         <projectService serviceImplementation="net.ishchenko.idea.minibatis.DomFileElementsFinder"/>
+        <projectService serviceImplementation="net.ishchenko.idea.minibatis.alias.AliasFacade"/>
     </extensions>
 
 </idea-plugin>

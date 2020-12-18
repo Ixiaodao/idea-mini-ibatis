@@ -1,5 +1,13 @@
 package net.ishchenko.idea.minibatis.model.sqlmap;
 
+
+import com.intellij.psi.PsiClass;
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.Convert;
+import com.intellij.util.xml.GenericAttributeValue;
+import net.ishchenko.idea.minibatis.converter.AliasConverter;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Max
@@ -7,7 +15,4 @@ package net.ishchenko.idea.minibatis.model.sqlmap;
  * Time: 21:55
  */
 public interface Select extends SqlMapIdentifiableStatement, ResultProvider {
-
-
-
 }
