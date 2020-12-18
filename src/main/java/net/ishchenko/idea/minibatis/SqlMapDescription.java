@@ -1,6 +1,7 @@
 package net.ishchenko.idea.minibatis;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomFileDescription;
@@ -22,9 +23,14 @@ public class SqlMapDescription extends DomFileDescription<SqlMap> {
 
     @Override
     public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module) {
-        //todo: maybe use namespace policy?
+        if (!isXmlFile(file)) {
+            return false;
+        }
         XmlTag rootTag = file.getRootTag();
-        return rootTag != null && rootTag.getName().equals(getRootTagName());
+        return null != rootTag && rootTag.getName().equals("sqlMap");
     }
 
+    static boolean isXmlFile(@NotNull PsiFile file) {
+        return file instanceof XmlFile;
+    }
 }

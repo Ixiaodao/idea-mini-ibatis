@@ -18,6 +18,7 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.xml.DomTarget;
 import net.ishchenko.idea.minibatis.model.sqlmap.SqlMapIdentifiableStatement;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,18 +48,14 @@ public class IdentifiableStatementReference extends PsiPolyVariantReferenceBase<
         if (value.length() == 0) {
             return ResolveResult.EMPTY_ARRAY;
         }
-
-        String[] parts = dotPattern.split(value);
-
-        if (parts.length == 1) {
-            return findResults("", parts[0]).toArray(ResolveResult.EMPTY_ARRAY);
-        } else {
-            List<ResolveResult> results = new ArrayList<ResolveResult>();
-            for (int i = 0; i < parts.length - 1; i++) {
-                results.addAll(findResults(concatBefore(parts, i), concatAfter(parts, i + 1)));
-            }
-            return results.toArray(new ResolveResult[results.size()]);
+        if (!value.contains(".") || value.endsWith(".")) {
+            return ResolveResult.EMPTY_ARRAY;
         }
+        String[] arr = value.split("\\.");
+        String id = arr[arr.length - 1];
+        String namespace = StringUtils.removeEnd(value, "." + id);
+        List<ResolveResult> results = findResults(namespace, id);
+        return results.toArray(new ResolveResult[results.size()]);
 
     }
 
