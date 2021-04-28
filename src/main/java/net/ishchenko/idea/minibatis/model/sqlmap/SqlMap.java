@@ -7,6 +7,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.NameValue;
 import com.intellij.util.xml.SubTagList;
 import com.intellij.util.xml.SubTagsList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -22,11 +23,12 @@ public interface SqlMap extends DomElement {
     @Attribute("namespace")
     GenericAttributeValue<String> getNamespace();
 
-    @SubTagsList({"statement", "select", "insert", "update", "delete"})
-    List<SqlMapIdentifiableStatement> getIdentifiableStatements();
+    @NotNull
+    @SubTagsList({"insert", "update", "delete", "select"})
+    public List<IdDomElement> getDaoElements();
     
     @SubTagList("sql")
-    List<SqlMapIdentifiableStatement> getSqls();
+    List<Sql> getSqls();
 
     @SubTagList("statement")
     List<Statement> getStatements();

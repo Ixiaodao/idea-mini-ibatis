@@ -10,7 +10,7 @@ import java.util.List;
  * Date: 22.01.12
  * Time: 0:34
  */
-public interface Insert extends SqlMapIdentifiableStatement {
+public interface Insert extends GroupTwo {
 
     @SubTagList("selectKey")
     List<SelectKey> getSelectKeys();

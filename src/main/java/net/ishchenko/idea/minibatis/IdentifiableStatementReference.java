@@ -15,10 +15,9 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
 import com.intellij.psi.impl.PomTargetPsiElementImpl;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.CommonProcessors;
 import com.intellij.util.xml.DomTarget;
+import net.ishchenko.idea.minibatis.model.sqlmap.IdDomElement;
 import net.ishchenko.idea.minibatis.model.sqlmap.SqlMap;
-import net.ishchenko.idea.minibatis.model.sqlmap.SqlMapIdentifiableStatement;
 import net.ishchenko.idea.minibatis.util.DomUtils;
 import net.ishchenko.idea.minibatis.util.Icons;
 import org.apache.commons.collections.CollectionUtils;
@@ -72,10 +71,10 @@ public class IdentifiableStatementReference extends PsiPolyVariantReferenceBase<
             if (!Objects.equals(namespace, stringValue)) {
                 continue;
             }
-            List<SqlMapIdentifiableStatement> identifiableStatements = domElement.getIdentifiableStatements();
-            for (SqlMapIdentifiableStatement identifiableStatement : identifiableStatements) {
-                DomTarget target = DomTarget.getTarget(identifiableStatement);
-                String methodName = identifiableStatement.getId().getStringValue();
+            List<IdDomElement> identifiableStatements = domElement.getDaoElements();
+            for (IdDomElement idDomElement : identifiableStatements) {
+                DomTarget target = DomTarget.getTarget(idDomElement);
+                String methodName = idDomElement.getId().getStringValue();
                 if (Objects.equals(methodName, id)) {
                     resultList.add(new PsiElementResolveResult(new PomTargetPsiElementImpl(target) {
                         @Override

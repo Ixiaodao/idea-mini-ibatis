@@ -3,9 +3,7 @@ package net.ishchenko.idea.minibatis.model.sqlmap;
 
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
-import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.NameValue;
 import com.intellij.util.xml.SubTagList;
 import net.ishchenko.idea.minibatis.converter.AliasConverter;
 
@@ -17,11 +15,8 @@ import java.util.List;
  * Date: 22.01.12
  * Time: 0:28
  */
-public interface ResultMap extends DomElement {
+public interface ResultMap extends IdDomElement {
 
-    @NameValue
-    @Attribute("id")
-    GenericAttributeValue<String> getId();
 
     @Attribute("class")
     @Convert(AliasConverter.class)

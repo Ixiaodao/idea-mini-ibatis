@@ -6,5 +6,5 @@ package net.ishchenko.idea.minibatis.model.sqlmap;
  * Date: 22.01.12
  * Time: 0:33
  */
-public interface Update extends SqlMapIdentifiableStatement {
+public interface Update extends GroupTwo {
 }

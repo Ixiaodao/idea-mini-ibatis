@@ -1,9 +1,9 @@
 package net.ishchenko.idea.minibatis.model.sqlmap;
 
 import com.intellij.util.xml.Attribute;
-import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.NameValue;
+import net.ishchenko.idea.minibatis.converter.AliasConverter;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,13 +11,10 @@ import com.intellij.util.xml.NameValue;
  * Date: 02.03.12
  * Time: 21:44
  */
-public interface ParameterMap extends DomElement {
-
-    @NameValue
-    @Attribute("id")
-    GenericAttributeValue<String> getId();
+public interface ParameterMap extends IdDomElement {
 
     @Attribute("class")
+    @Convert(AliasConverter.class)
     GenericAttributeValue<TypeAlias> getClazz();
 
 }
