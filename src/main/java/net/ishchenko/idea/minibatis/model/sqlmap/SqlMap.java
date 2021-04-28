@@ -22,7 +22,7 @@ public interface SqlMap extends DomElement {
     @Attribute("namespace")
     GenericAttributeValue<String> getNamespace();
 
-    @SubTagsList({"sql", "statement", "select", "insert", "update", "delete", "procedure"})
+    @SubTagsList({"statement", "select", "insert", "update", "delete"})
     List<SqlMapIdentifiableStatement> getIdentifiableStatements();
     
     @SubTagList("sql")

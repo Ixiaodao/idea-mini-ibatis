@@ -2,6 +2,7 @@ package net.ishchenko.idea.minibatis;
 
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiExpression;
@@ -14,17 +15,22 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
 import com.intellij.psi.impl.PomTargetPsiElementImpl;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.xml.DomTarget;
+import net.ishchenko.idea.minibatis.model.sqlmap.SqlMap;
 import net.ishchenko.idea.minibatis.model.sqlmap.SqlMapIdentifiableStatement;
+import net.ishchenko.idea.minibatis.util.DomUtils;
+import net.ishchenko.idea.minibatis.util.Icons;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Objects;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,17 +40,14 @@ import java.util.regex.Pattern;
  */
 public class IdentifiableStatementReference extends PsiPolyVariantReferenceBase<PsiLiteral> {
 
-    private static final Pattern dotPattern = Pattern.compile("\\.");
-
     public IdentifiableStatementReference(PsiLiteral expression) {
         super(expression);
     }
 
-    @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean b) {
-
-        String value = tryComputeConcatenatedValue();
+    public ResolveResult @NotNull [] multiResolve(boolean b) {
+        long s1 = System.currentTimeMillis();
+        String value = getNamespaceAndMethod();
         if (value.length() == 0) {
             return ResolveResult.EMPTY_ARRAY;
         }
@@ -54,21 +57,55 @@ public class IdentifiableStatementReference extends PsiPolyVariantReferenceBase<
         String[] arr = value.split("\\.");
         String id = arr[arr.length - 1];
         String namespace = StringUtils.removeEnd(value, "." + id);
-        List<ResolveResult> results = findResults(namespace, id);
+        List<ResolveResult> results = findResults2V(namespace, id);
+        if (CollectionUtils.isEmpty(results)) {
+            return ResolveResult.EMPTY_ARRAY;
+        }
+        long s2 = System.currentTimeMillis();
+        System.out.println(MessageFormat.format("value={0},time={1}", value, (s2- s1)));
         return results.toArray(new ResolveResult[results.size()]);
 
     }
 
-    @NotNull
-    public Object[] getVariants() {
+    private List<ResolveResult> findResults2V(String namespace, String id) {
+        List<ResolveResult> resultList = new ArrayList<>();
+        Collection<SqlMap> domElements = DomUtils.findDomElements(getElement().getProject(), SqlMap.class);
+        for (SqlMap domElement : domElements) {
+            String stringValue = domElement.getNamespace().getStringValue();
+            if (!Objects.equals(namespace, stringValue)) {
+                continue;
+            }
+            List<SqlMapIdentifiableStatement> identifiableStatements = domElement.getIdentifiableStatements();
+            for (SqlMapIdentifiableStatement identifiableStatement : identifiableStatements) {
+                DomTarget target = DomTarget.getTarget(identifiableStatement);
+                String methodName = identifiableStatement.getId().getStringValue();
+                if (Objects.equals(methodName, id)) {
+                    resultList.add(new PsiElementResolveResult(new PomTargetPsiElementImpl(target) {
+                        @Override
+                        public Icon getIcon() {
+                            return Icons.XML_TAG_ICON;
+                        }
+                        @Override
+                        public String getLocationString() {
+                            return methodName;
+                        }
+                    }));
+                }
 
-        CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>();
-        ServiceManager.getService(getElement().getProject(), DomFileElementsFinder.class).processSqlMapStatementNames(processor);
-        return processor.toArray(new String[processor.getResults().size()]);
-
+            }
+        }
+        return resultList;
     }
 
-    private String tryComputeConcatenatedValue() {
+    @NotNull
+    public Object[] getVariants() {
+        return EMPTY_ARRAY;
+        //CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>();
+        //ServiceManager.getService(getElement().getProject(), DomFileElementsFinder.class).processSqlMapStatementNames(processor);
+        //return processor.toArray(new String[processor.getResults().size()]);
+    }
+
+    private String getNamespaceAndMethod() {
 
         PsiPolyadicExpression parentExpression = PsiTreeUtil.getParentOfType(getElement(), PsiPolyadicExpression.class);
 
@@ -104,52 +141,6 @@ public class IdentifiableStatementReference extends PsiPolyVariantReferenceBase<
             return rawText.substring(1, rawText.length() - 1);
         }
 
-    }
-
-    private List<ResolveResult> findResults(String namespace, String id) {
-
-        CommonProcessors.CollectUniquesProcessor<SqlMapIdentifiableStatement> processor = new CommonProcessors.CollectUniquesProcessor<SqlMapIdentifiableStatement>();
-        ServiceManager.getService(getElement().getProject(), DomFileElementsFinder.class).processSqlMapStatements(namespace, id, processor);
-
-        Collection<SqlMapIdentifiableStatement> processorResults = processor.getResults();
-        final List<ResolveResult> results = new ArrayList<ResolveResult>(processorResults.size());
-        final SqlMapIdentifiableStatement[] statements = processorResults.toArray(new SqlMapIdentifiableStatement[processorResults.size()]);
-        for (SqlMapIdentifiableStatement statement : statements) {
-            DomTarget target = DomTarget.getTarget(statement);
-            if (target != null) {
-                XmlElement xmlElement = statement.getXmlElement();
-                final String locationString = xmlElement != null ? xmlElement.getContainingFile().getName() : "";
-                results.add(new PsiElementResolveResult(new PomTargetPsiElementImpl(target) {
-                    @Override
-                    public String getLocationString() {
-                        return locationString;
-                    }
-                }));
-            }
-        }
-        return results;
-    }
-
-    private String concatBefore(String[] parts, int before) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i <= before; i++) {
-            sb.append(parts[i]);
-            if (i + 1 <= before) {
-                sb.append(".");
-            }
-        }
-        return sb.toString();
-    }
-
-    private String concatAfter(String[] parts, int after) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = after; i < parts.length; i++) {
-            sb.append(parts[i]);
-            if (i + 1 < parts.length) {
-                sb.append(".");
-            }
-        }
-        return sb.toString();
     }
 
 }

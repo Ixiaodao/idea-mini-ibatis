@@ -20,9 +20,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <psi.referenceContributor implementation="net.ishchenko.idea.minibatis.MyBatisReferenceContributor"/>
+        <psi.referenceContributor implementation="net.ishchenko.idea.minibatis.IbatisReferenceContributor"/>
         <dom.fileDescription implementation="net.ishchenko.idea.minibatis.SqlMapDescription"/>
-        <projectService serviceImplementation="net.ishchenko.idea.minibatis.DomFileElementsFinder"/>
         <projectService serviceImplementation="net.ishchenko.idea.minibatis.alias.AliasFacade"/>
     </extensions>
 

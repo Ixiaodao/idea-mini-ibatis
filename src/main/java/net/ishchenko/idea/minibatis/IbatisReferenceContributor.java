@@ -17,14 +17,13 @@ import org.jetbrains.annotations.NotNull;
  * Date: 17.12.11
  * Time: 20:36
  */
-public class MyBatisReferenceContributor extends PsiReferenceContributor {
+public class IbatisReferenceContributor extends PsiReferenceContributor {
 
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
 
         registrar.registerReferenceProvider(PsiJavaPatterns.psiLiteral(), new PsiReferenceProvider() {
-            @NotNull
-            public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+            public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
                 return new PsiReference[]{new IdentifiableStatementReference((PsiLiteral) element)};
             }
         });
