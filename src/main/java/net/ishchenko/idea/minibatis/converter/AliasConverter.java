@@ -12,25 +12,31 @@ import com.intellij.util.xml.CustomReferenceConverter;
 import com.intellij.util.xml.DomJavaUtil;
 import com.intellij.util.xml.GenericDomValue;
 import com.intellij.util.xml.PsiClassConverter;
-import net.ishchenko.idea.minibatis.alias.AliasClassReference;
+import com.intellij.util.xml.ResolvingConverter;
 import net.ishchenko.idea.minibatis.alias.AliasFacade;
+import net.ishchenko.idea.minibatis.util.IbatisConstant;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * @author yanglin
  */
-public class AliasConverter extends ConverterAdaptor<PsiClass> implements CustomReferenceConverter<PsiClass> {
+public class AliasConverter extends ResolvingConverter<PsiClass> implements CustomReferenceConverter<PsiClass> {
 
-    private PsiClassConverter delegate = new PsiClassConverter();
+    private final PsiClassConverter delegate = new PsiClassConverter();
 
     @Nullable
     @Override
     public PsiClass fromString(@Nullable @NonNls String s, ConvertContext context) {
-        if (StringUtil.isEmptyOrSpaces(s)) return null;
-        if (!s.contains("\\.")) {
-            return AliasFacade.getInstance(context.getProject()).findPsiClass(context.getXmlElement(), s).orNull();
+        if (StringUtil.isEmptyOrSpaces(s)) {
+            return null;
+        }
+        if (!s.contains(IbatisConstant.DOT_SEPARATOR)) {
+            return AliasFacade.getInstance(context.getProject()).findPsiClass(context.getXmlElement(), s);
         }
         return DomJavaUtil.findClass(s.trim(), context.getFile(), context.getModule(), GlobalSearchScope.allScope(context.getProject()));
     }
@@ -41,13 +47,18 @@ public class AliasConverter extends ConverterAdaptor<PsiClass> implements Custom
         return delegate.toString(psiClass, context);
     }
 
-    @NotNull
     @Override
-    public PsiReference[] createReferences(GenericDomValue<PsiClass> value, PsiElement element, ConvertContext context) {
-        if (((XmlAttributeValue) element).getValue().contains("\\.")) {
+    public PsiReference @NotNull [] createReferences(GenericDomValue<PsiClass> value, PsiElement element, ConvertContext context) {
+        if (((XmlAttributeValue) element).getValue().contains(IbatisConstant.DOT_SEPARATOR)) {
             return delegate.createReferences(value, element, context);
         } else {
-            return new PsiReference[]{new AliasClassReference((XmlAttributeValue) element)};
+            return new PsiReference[]{};
         }
     }
+
+    @Override
+    public @NotNull Collection<? extends PsiClass> getVariants(ConvertContext convertContext) {
+        return Collections.emptyList();
+    }
+
 }

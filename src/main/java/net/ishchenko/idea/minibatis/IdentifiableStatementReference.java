@@ -46,7 +46,6 @@ public class IdentifiableStatementReference extends PsiPolyVariantReferenceBase<
 
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean b) {
-        long s1 = System.currentTimeMillis();
         String value = getNamespaceAndMethod();
         if (value.length() == 0) {
             return ResolveResult.EMPTY_ARRAY;
@@ -61,8 +60,6 @@ public class IdentifiableStatementReference extends PsiPolyVariantReferenceBase<
         if (CollectionUtils.isEmpty(results)) {
             return ResolveResult.EMPTY_ARRAY;
         }
-        long s2 = System.currentTimeMillis();
-        System.out.println(MessageFormat.format("value={0},time={1}", value, (s2- s1)));
         return results.toArray(new ResolveResult[results.size()]);
 
     }

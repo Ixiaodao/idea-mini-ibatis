@@ -39,23 +39,22 @@ public class AliasFacade {
     }
 
     private void initResolvers() {
-        this.registerResolver(AliasResolverFactory.createAnnotationResolver(project));
+        this.registerResolver(new AnnotationAliasResolver(project));
     }
 
-    @NotNull
-    public Optional<PsiClass> findPsiClass(@Nullable PsiElement element, @NotNull String shortName) {
+    public PsiClass findPsiClass(@Nullable PsiElement element, @NotNull String shortName) {
         PsiClass clazz = javaPsiFacade.findClass(shortName, GlobalSearchScope.allScope(project));
         if (null != clazz) {
-            return Optional.of(clazz);
+            return clazz;
         }
         for (AliasResolver resolver : resolvers) {
             for (AliasDesc desc : resolver.getClassAliasDescriptions(element)) {
                 if (shortName.equalsIgnoreCase(desc.getAlias())) {
-                    return Optional.of(desc.getClazz());
+                    return desc.getClazz();
                 }
             }
         }
-        return Optional.absent();
+        return null;
     }
 
     @NotNull
@@ -67,18 +66,18 @@ public class AliasFacade {
         return result;
     }
 
-    public Optional<AliasDesc> findAliasDesc(@Nullable PsiClass clazz) {
+    public AliasDesc findAliasDesc(@Nullable PsiClass clazz) {
         if (clazz == null) {
-            return Optional.absent();
+            return null;
         }
         for (AliasResolver resolver : resolvers) {
             for (AliasDesc desc : resolver.getClassAliasDescriptions(clazz)) {
                 if (clazz.equals(desc.getClazz())) {
-                    return Optional.of(desc);
+                    return desc;
                 }
             }
         }
-        return Optional.absent();
+        return null;
     }
 
     public void registerResolver(@NotNull AliasResolver resolver) {

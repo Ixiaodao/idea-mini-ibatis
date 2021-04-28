@@ -22,16 +22,15 @@ public abstract class AliasResolver {
         this.project = project;
     }
 
-    @NotNull
-    protected Optional<AliasDesc> addAliasDesc(@NotNull Set<AliasDesc> descs, @Nullable PsiClass clazz, @Nullable String alias) {
+    protected AliasDesc addAliasDesc(@NotNull Set<AliasDesc> descs, @Nullable PsiClass clazz, @Nullable String alias) {
         if (null == alias || !JavaUtils.isModelClazz(clazz)) {
-            return Optional.absent();
+            return null;
         }
         AliasDesc desc = new AliasDesc();
         descs.add(desc);
         desc.setClazz(clazz);
         desc.setAlias(alias);
-        return Optional.of(desc);
+        return desc;
     }
 
     @NotNull
