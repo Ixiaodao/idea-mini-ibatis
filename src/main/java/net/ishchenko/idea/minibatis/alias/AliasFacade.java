@@ -40,6 +40,7 @@ public class AliasFacade {
 
     private void initResolvers() {
         this.registerResolver(new AnnotationAliasResolver(project));
+        this.registerResolver(new InnerAliasResolver(project));
     }
 
     public PsiClass findPsiClass(@Nullable PsiElement element, @NotNull String shortName) {

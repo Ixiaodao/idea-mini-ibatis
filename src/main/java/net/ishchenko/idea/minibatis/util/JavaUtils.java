@@ -60,6 +60,8 @@ public final class JavaUtils {
         return null != modifierList && null != modifierList.findAnnotation(alias);
     }
 
-
+    public static PsiClass findClazz(@NotNull Project project, @NotNull String clazzName) {
+        return JavaPsiFacade.getInstance(project).findClass(clazzName, GlobalSearchScope.allScope(project));
+    }
 
 }
