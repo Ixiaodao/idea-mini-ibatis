@@ -64,4 +64,32 @@ public final class JavaUtils {
         return JavaPsiFacade.getInstance(project).findClass(clazzName, GlobalSearchScope.allScope(project));
     }
 
+    public static PsiField[] findSettablePsiFields(final PsiClass clazz) {
+        if (clazz == null) {
+            return PsiField.EMPTY_ARRAY;
+        }
+        final PsiField[] fields = clazz.getAllFields();
+        final List<PsiField> settableFields = new ArrayList<>(fields.length);
+
+        for (final PsiField f : fields) {
+            final PsiModifierList modifiers = f.getModifierList();
+
+            if (modifiers != null && (
+                    modifiers.hasModifierProperty(PsiModifier.STATIC) ||
+                            modifiers.hasModifierProperty(PsiModifier.FINAL))) {
+                continue;
+            }
+
+            settableFields.add(f);
+        }
+
+        return settableFields.toArray(new PsiField[0]);
+    }
+
+    public static PsiField findSettablePsiField(final PsiClass clazz, final String propertyName) {
+        if (clazz == null) {
+            return null;
+        }
+        return PropertyUtil.findPropertyField(clazz, propertyName, false);
+    }
 }
