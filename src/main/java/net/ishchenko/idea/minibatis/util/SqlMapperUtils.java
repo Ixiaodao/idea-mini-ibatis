@@ -1,9 +1,12 @@
 package net.ishchenko.idea.minibatis.util;
 
 
+import com.intellij.psi.PsiElement;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
+import net.ishchenko.idea.minibatis.model.sqlmap.IdDomElement;
 import net.ishchenko.idea.minibatis.model.sqlmap.SqlMap;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author jiwenbiao
@@ -16,6 +19,17 @@ public class SqlMapperUtils {
             throw new IllegalArgumentException("Unknown element");
         }
         return sqlMap;
+    }
+
+    public static IdDomElement findParentIdDomElement(@Nullable PsiElement element) {
+        DomElement domElement = DomUtil.getDomElement(element);
+        if (null == domElement) {
+            return null;
+        }
+        if (domElement instanceof IdDomElement) {
+            return (IdDomElement) domElement;
+        }
+        return DomUtil.getParentOfType(domElement, IdDomElement.class, true);
     }
 
 }
