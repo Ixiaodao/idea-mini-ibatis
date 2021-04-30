@@ -19,10 +19,13 @@ public class SelectReference extends ReferenceSetBase<PsiReference> {
     public SelectReference(String text, @NotNull PsiElement element, int offset, GroupTwo groupTwo) {
         super(text, element, offset, DOT_SEPARATOR);
         this.groupTwo = groupTwo;
+        System.out.println("11111");
+
     }
 
     @Override
     protected @Nullable PsiReference createReference(TextRange range, int index) {
+        System.out.println("22222");
         XmlAttributeValue element = (XmlAttributeValue) getElement();
         return null == element ? null : new ContextPsiFieldReference(element, range, index, groupTwo);
     }

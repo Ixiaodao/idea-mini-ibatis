@@ -47,4 +47,6 @@ public class ContextPsiFieldReference extends PsiReferenceBase<XmlAttributeValue
         return JavaUtils.findSettablePsiFields(resultClass.getValue());
     }
 
+
+
 }
