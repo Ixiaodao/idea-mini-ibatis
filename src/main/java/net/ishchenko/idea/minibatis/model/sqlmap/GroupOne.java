@@ -25,10 +25,18 @@ public interface GroupOne extends DomElement {
     List<IsEqual> getIsEqual();
 
     @NotNull
+    @SubTagList("isNull")
+    List<IsEqual> getIsNull();
+
+    @NotNull
     @SubTagList("isNotEmpty")
     List<IsNotEmpty> getIsNotEmpty();
 
     @NotNull
     @SubTagList("isNotEqual")
     List<IsNotEqual> getIsNotEqual();
+
+    @NotNull
+    @SubTagList("isNotNull")
+    List<IsNotEqual> getIsNotNull();
 }
