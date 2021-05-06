@@ -12,15 +12,10 @@ import net.ishchenko.idea.minibatis.model.sqlmap.GroupTwo;
 import net.ishchenko.idea.minibatis.util.JavaUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author yanglin
