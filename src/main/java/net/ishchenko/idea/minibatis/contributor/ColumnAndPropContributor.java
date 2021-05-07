@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.JavaLookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Editor;
@@ -63,26 +64,33 @@ public class ColumnAndPropContributor extends CompletionContributor {
         IdDomElement idDomElement = SqlMapperUtils.findParentIdDomElement(topLevelFile.findElementAt(domOffset));
         if (idDomElement instanceof Select) {
             Select select = (Select) idDomElement;
+            // 补充入参提示
             PsiClass paramClass = select.getParameterClass().getValue();
-            PsiField[] settablePsiFields = JavaUtils.findSettablePsiFields(paramClass);
-            for (PsiField settablePsiField : settablePsiFields) {
-                returnResult.addElement(LookupElementBuilder.create(settablePsiField.getName()));
-            }
+            addLookupElement(returnResult, paramClass);
+            // 补充出参提示
             PsiClass resultClass = select.getResultClass().getValue();
-            PsiField[] settablePsiFields2 = JavaUtils.findSettablePsiFields(resultClass);
-            for (PsiField settablePsiField : settablePsiFields2) {
-                returnResult.addElement(LookupElementBuilder.create(settablePsiField.getName()));
-            }
+            addLookupElement(returnResult, resultClass);
         }
         if (idDomElement instanceof Insert || idDomElement instanceof Update || idDomElement instanceof Delete) {
             GroupTwo groupTwo = (GroupTwo) idDomElement;
-            PsiClass value = groupTwo.getParameterClass().getValue();
-            PsiField[] settablePsiFields = JavaUtils.findSettablePsiFields(value);
+            PsiClass paramClass = groupTwo.getParameterClass().getValue();
+            if (paramClass == null) {
+                return;
+            }
+            addLookupElement(returnResult, paramClass);
+        }
+    }
+
+    private void addLookupElement(@NotNull CompletionResultSet returnResult, PsiClass psiClass) {
+        if (psiClass != null) {
+            PsiField[] settablePsiFields = JavaUtils.findSettablePsiFields(psiClass);
             for (PsiField settablePsiField : settablePsiFields) {
-                returnResult.addElement(LookupElementBuilder.create(settablePsiField.getName()));
+                LookupElementBuilder lookupElementBuilder = JavaLookupElementBuilder.forField(settablePsiField);
+                lookupElementBuilder = lookupElementBuilder.withTailText("(" + psiClass.getName() + ")");
+                lookupElementBuilder = lookupElementBuilder.withTypeText(psiClass.getName());
+                returnResult.addElement(lookupElementBuilder);
             }
         }
-
     }
 
     private boolean isResult(PsiFile file, int offset) {
