@@ -8,19 +8,27 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.xml.DomUtil;
+import net.ishchenko.idea.minibatis.model.sqlmap.Delete;
+import net.ishchenko.idea.minibatis.model.sqlmap.GroupTwo;
 import net.ishchenko.idea.minibatis.model.sqlmap.IdDomElement;
-import net.ishchenko.idea.minibatis.model.sqlmap.Result;
+import net.ishchenko.idea.minibatis.model.sqlmap.Insert;
 import net.ishchenko.idea.minibatis.model.sqlmap.ResultMap;
+import net.ishchenko.idea.minibatis.model.sqlmap.Select;
 import net.ishchenko.idea.minibatis.model.sqlmap.SqlMap;
+import net.ishchenko.idea.minibatis.model.sqlmap.Update;
 import net.ishchenko.idea.minibatis.util.DomUtils;
+import net.ishchenko.idea.minibatis.util.JavaUtils;
 import net.ishchenko.idea.minibatis.util.SqlMapperUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -29,35 +37,81 @@ import java.util.List;
  * @since : 2021/4/27 18:27
  */
 public class ColumnAndPropContributor extends CompletionContributor {
+    private static final Logger log = LoggerFactory.getLogger(ColumnAndPropContributor.class);
     public ColumnAndPropContributor() {
         System.out.println("123");
     }
 
     @Override
     public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet returnResult) {
-        List<ResultMap> resultMaps = getResultMaps(parameters);
-        if (CollectionUtils.isEmpty(resultMaps)) {
+        if (parameters.getCompletionType() != CompletionType.BASIC) {
             return;
         }
-        for (ResultMap resultMap : resultMaps) {
-            List<Result> results = resultMap.getResults();
-            if (CollectionUtils.isEmpty(results)) {
-                continue;
-            }
-            for (Result result : results) {
-                String column = result.getColumn().getRawText();
-                String property = result.getProperty().getRawText();
-                if (StringUtils.isNotEmpty(column)) {
-                    returnResult.addElement(LookupElementBuilder.create(column));
-                }
-                if (StringUtils.isNotEmpty(property)) {
-                    returnResult.addElement(LookupElementBuilder.create(property));
-                }
-            }
-
+        PsiElement position = parameters.getOriginalPosition();
+        if (position == null) {
+            return;
         }
-        returnResult.stopHere();
+        Editor editor = parameters.getEditor();
+        Project project = editor.getProject();
+        if (project == null) {
+            return;
+        }
+        InjectedLanguageManager injectedLanguageManager = InjectedLanguageManager.getInstance(project);
+        PsiFile topLevelFile = injectedLanguageManager.getTopLevelFile(position);
+        int offset = parameters.getOffset();
+        int domOffset = injectedLanguageManager.injectedToHost(position, position.getTextOffset());
+        IdDomElement idDomElement = SqlMapperUtils.findParentIdDomElement(topLevelFile.findElementAt(domOffset));
+        if (idDomElement instanceof Select) {
+            Select select = (Select) idDomElement;
+            PsiClass paramClass = select.getParameterClass().getValue();
+            PsiField[] settablePsiFields = JavaUtils.findSettablePsiFields(paramClass);
+            for (PsiField settablePsiField : settablePsiFields) {
+                returnResult.addElement(LookupElementBuilder.create(settablePsiField.getName()));
+            }
+            PsiClass resultClass = select.getResultClass().getValue();
+            PsiField[] settablePsiFields2 = JavaUtils.findSettablePsiFields(resultClass);
+            for (PsiField settablePsiField : settablePsiFields2) {
+                returnResult.addElement(LookupElementBuilder.create(settablePsiField.getName()));
+            }
+        }
+        if (idDomElement instanceof Insert || idDomElement instanceof Update || idDomElement instanceof Delete) {
+            GroupTwo groupTwo = (GroupTwo) idDomElement;
+            PsiClass value = groupTwo.getParameterClass().getValue();
+            PsiField[] settablePsiFields = JavaUtils.findSettablePsiFields(value);
+            for (PsiField settablePsiField : settablePsiFields) {
+                returnResult.addElement(LookupElementBuilder.create(settablePsiField.getName()));
+            }
+        }
+
     }
+
+    private boolean isResult(PsiFile file, int offset) {
+
+        String text = file.getText();
+        for (int i = offset - 1; i > 0; i--) {
+            char c = text.charAt(i);
+            if (c == '#') {
+                break;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAs(PsiFile file, int offset) {
+        String text = file.getText();
+        for (int i = offset - 1; i > 0; i--) {
+            char c = text.charAt(i);
+            String str = String.valueOf(c);
+            if ("\n".equals(str)) {
+                break;
+            }
+            if ("s".equalsIgnoreCase(str) && "a".equalsIgnoreCase(String.valueOf(text.charAt(i-1))) && " ".equals(String.valueOf(text.charAt(i-2)))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Nullable
     private List<ResultMap> getResultMaps(@NotNull CompletionParameters parameters) {
