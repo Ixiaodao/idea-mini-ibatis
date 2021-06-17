@@ -21,4 +21,6 @@ public interface Icons {
     Icon STATEMENT_LINE_MARKER_ICON = IconLoader.getIcon("/images/statement.png");
 
     Icon SPRING_INJECTION_ICON = IconLoader.getIcon("/images/injection.png");
+
+    public static final Icon MyBatisIcon = IconLoader.getIcon("/icons/ibatis.png", Icons.class);
 }
