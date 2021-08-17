@@ -42,7 +42,7 @@ public class RestoreSqlForSelection extends AnAction {
             if (StringUtils.isNotEmpty(selectedText)) {
                 //分割每一行
                 String[] selectedRowText = selectedText.split("\n");
-                String s = RestoreIbatisSqlUtil.restoreSql(selectedRowText[0], selectedRowText[2]);
+                String s = RestoreIbatisSqlUtil.restoreSql(selectedRowText[0], selectedRowText[1]);
                 CopyPasteManager.getInstance().setContents(new StringSelection(s));
             }
         } catch (Exception exception) {
