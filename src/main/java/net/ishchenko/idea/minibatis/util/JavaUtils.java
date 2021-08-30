@@ -21,6 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import net.ishchenko.idea.minibatis.annotation.Annotation;
+import net.ishchenko.idea.minibatis.model.sqlmap.IdDomElement;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,14 @@ public final class JavaUtils {
 
     private JavaUtils() {
         throw new UnsupportedOperationException();
+    }
+
+    public static boolean isElementWithinInterface(@Nullable PsiElement element) {
+        if (element instanceof PsiClass && ((PsiClass) element).isInterface()) {
+            return true;
+        }
+        PsiClass type = PsiTreeUtil.getParentOfType(element, PsiClass.class);
+        return type != null && type.isInterface();
     }
 
     public static boolean isModelClazz(@Nullable PsiClass clazz) {
@@ -91,5 +100,22 @@ public final class JavaUtils {
             return null;
         }
         return PropertyUtil.findPropertyField(clazz, propertyName, false);
+    }
+
+    public static PsiMethod findMethod(@NotNull Project project, @NotNull IdDomElement element) {
+        return findMethod(project, SqlMapperUtils.getNamespace(element), SqlMapperUtils.getId(element));
+    }
+
+    public static PsiMethod findMethod(@NotNull Project project, @Nullable String clazzName, @Nullable String methodName) {
+        if (StringUtils.isBlank(clazzName) && StringUtils.isBlank(methodName)) {
+            return null;
+        }
+
+        PsiClass clazz = findClazz(project, clazzName);
+        if (clazz != null) {
+            PsiMethod[] methods = clazz.findMethodsByName(methodName, true);
+            return ArrayUtils.isEmpty(methods) ? null : methods[0];
+        }
+        return null;
     }
 }

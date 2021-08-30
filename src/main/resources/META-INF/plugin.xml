@@ -25,6 +25,13 @@
         <projectService serviceImplementation="net.ishchenko.idea.minibatis.alias.AliasFacade"/>
         <completion.contributor language="SQL" implementationClass="net.ishchenko.idea.minibatis.contributor.ColumnAndPropContributor"/>
 
+        <projectService serviceImplementation="net.ishchenko.idea.minibatis.service.JavaService"/>
+
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="net.ishchenko.idea.minibatis.provider.MapperLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="XML"
+                                        implementationClass="net.ishchenko.idea.minibatis.provider.StatementLineMarkerProvider"/>
+
     </extensions>
 
     <actions>

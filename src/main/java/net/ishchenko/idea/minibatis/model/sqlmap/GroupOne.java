@@ -39,4 +39,40 @@ public interface GroupOne extends DomElement {
     @NotNull
     @SubTagList("isNotNull")
     List<IsNotEqual> getIsNotNull();
+
+    @NotNull
+    @SubTagList("iterate")
+    List<Iterate> getIterate();
+
+    @NotNull
+    @SubTagList("dynamic")
+    List<Dynamic> getDynamic();
+
+    @NotNull
+    @SubTagList("isParameterPresent")
+    List<IsParameterPresent> getIsParameterPresent();
+
+    @NotNull
+    @SubTagList("isNotParameterPresent")
+    List<IsNotParameterPresent> getIsNotParameterPresent();
+
+    @NotNull
+    @SubTagList("isGreaterThan")
+    List<IsGreaterThan> getIsGreaterThan();
+
+    @NotNull
+    @SubTagList("isGreaterEqual")
+    List<IsGreaterEqual> getIsGreaterEqual();
+    @NotNull
+    @SubTagList("isLessThan")
+    List<IsLessThan> getIsLessThan();
+    @NotNull
+    @SubTagList("isLessEqual")
+    List<IsLessEqual> getIsLessEqual();
+    @NotNull
+    @SubTagList("isPropertyAvailable")
+    List<IsPropertyAvailable> getIsPropertyAvailable();
+    @NotNull
+    @SubTagList("isNotPropertyAvailable")
+    List<IsNotPropertyAvailable> getIsNotPropertyAvailable();
 }
