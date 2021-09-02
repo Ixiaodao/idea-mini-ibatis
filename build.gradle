@@ -26,7 +26,7 @@ apply plugin: 'idea'
 apply plugin: 'java'
 
 
-group 'com.ishchenko'
+group 'com.ishchenko2'
 version '2.0'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -44,7 +44,7 @@ dependencies {
 }
 
 intellij {
-    pluginName 'FreeMybatisLogPlugin'
+    pluginName 'Ibatis Mini Plugin2'
     plugins = ['com.intellij.java', 'DatabaseTools']
 
     // 开发环境运行时使用的版本

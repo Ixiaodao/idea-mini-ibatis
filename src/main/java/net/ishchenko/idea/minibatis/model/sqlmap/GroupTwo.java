@@ -7,6 +7,7 @@ import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
 import net.ishchenko.idea.minibatis.converter.AliasConverter;
+import net.ishchenko.idea.minibatis.converter.DaoMethodConverter;
 import net.ishchenko.idea.minibatis.converter.ParameterMapConverter;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,4 +26,8 @@ public interface GroupTwo extends GroupOne, IdDomElement {
     @Attribute("parameterMap")
     @Convert(ParameterMapConverter.class)
     public GenericAttributeValue<XmlTag> getParameterMap();
+
+    @Attribute("id")
+    @Convert(DaoMethodConverter.class)
+    public GenericAttributeValue<String> getId();
 }
