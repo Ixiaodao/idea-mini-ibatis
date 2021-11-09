@@ -60,7 +60,6 @@ public class WherePropertyParamContributor extends CompletionContributor {
                             @NotNull final CompletionParameters parameters,
                             final ProcessingContext context,
                             @NotNull final CompletionResultSet result) {
-                        final PsiElement position = parameters.getPosition();
                         addElementForPsiParameter2(parameters, context, result);
                     }
                 });
@@ -76,6 +75,7 @@ public class WherePropertyParamContributor extends CompletionContributor {
         GroupTwo groupTwo = DomUtil.getParentOfType(domElement, GroupTwo.class, true); // select insert update delete
         if (groupTwo != null) {
             m1(result, project, groupTwo);
+            result.stopHere();
         } else {
             // 如果是引用的sql标签，根据sql标签找sql，然后找到调用sql的方法，再找到类里的属性进行提示
             Sql sql = DomUtil.getParentOfType(domElement, Sql.class, true);
@@ -92,6 +92,7 @@ public class WherePropertyParamContributor extends CompletionContributor {
                     break;
                 }
                 m1(result, project, groupTwo2);
+                result.stopHere();
                 break;
             }
         }

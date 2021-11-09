@@ -24,7 +24,7 @@
         <dom.fileDescription implementation="net.ishchenko.idea.minibatis.SqlMapDescription"/>
         <projectService serviceImplementation="net.ishchenko.idea.minibatis.alias.AliasFacade"/>
         <completion.contributor language="SQL" implementationClass="net.ishchenko.idea.minibatis.contributor.ColumnAndPropContributor"/>
-        <completion.contributor language="XML" implementationClass="net.ishchenko.idea.minibatis.contributor.WherePropertyParamContributor"/>
+        <completion.contributor language="XML" order="first" implementationClass="net.ishchenko.idea.minibatis.contributor.WherePropertyParamContributor"/>
 
         <projectService serviceImplementation="net.ishchenko.idea.minibatis.service.JavaService"/>
 
