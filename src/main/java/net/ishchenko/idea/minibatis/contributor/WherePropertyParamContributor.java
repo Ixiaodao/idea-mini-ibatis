@@ -29,6 +29,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.Query;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
+import net.ishchenko.idea.minibatis.constant.IbatisConstant;
 import net.ishchenko.idea.minibatis.model.sqlmap.GroupTwo;
 import net.ishchenko.idea.minibatis.model.sqlmap.Sql;
 import net.ishchenko.idea.minibatis.util.JavaUtils;
@@ -48,19 +49,11 @@ import java.util.stream.Collectors;
  * @since 2021/11/9 10:46
  */
 public class WherePropertyParamContributor extends CompletionContributor {
-    private static final Logger logger = LoggerFactory.getLogger(WherePropertyParamContributor.class);
-
-    private static final String[] ARR = new String[]{"isNotEmpty", "isEmpty", "isNotNull", "isNull", "isNotEqual", "isEqual", "isGreaterThan", "isGreaterEqual",
-            "isLessThan", "isLessEqual", "", ""};
-
-    private static final String SERIAL_VERSION_UID = "serialVersionUID";
-
-    private static final String PROPERTY = "property";
 
     public WherePropertyParamContributor() {
         extend(CompletionType.BASIC,
-                XmlPatterns.psiElement().inside(XmlPatterns.xmlTag().withName(ARR))
-                        .inside(XmlPatterns.xmlAttribute().withName(PROPERTY)),
+                XmlPatterns.psiElement().inside(XmlPatterns.xmlTag().withName(IbatisConstant.ARR))
+                        .inside(XmlPatterns.xmlAttribute().withName(IbatisConstant.PROPERTY)),
                 new CompletionProvider<CompletionParameters>() {
                     @Override
                     protected void addCompletions(
@@ -132,7 +125,7 @@ public class WherePropertyParamContributor extends CompletionContributor {
                         }
                         PsiField[] allFields = clazz.getAllFields();
                         for (PsiField psiField : allFields) {
-                            if (SERIAL_VERSION_UID.equals(psiField.getName())) {
+                            if (IbatisConstant.SERIAL_VERSION_UID.equals(psiField.getName())) {
                                 continue;
                             }
                             addFieldTip(result, psiField);

@@ -33,6 +33,9 @@
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="net.ishchenko.idea.minibatis.provider.StatementLineMarkerProvider"/>
 
+        <psi.referenceContributor id="hashMarkerReferenceContributor"
+                                  implementation="net.ishchenko.idea.minibatis.referance.WherePropertyParmaReferenceContributor"/>
+
     </extensions>
 
     <actions>
