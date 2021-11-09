@@ -7,20 +7,14 @@ import com.intellij.patterns.PsiElementPattern;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.PsiReferenceContributor;
-import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.Query;
@@ -29,8 +23,6 @@ import com.intellij.util.xml.DomUtil;
 import net.ishchenko.idea.minibatis.constant.IbatisConstant;
 import net.ishchenko.idea.minibatis.model.sqlmap.GroupTwo;
 import net.ishchenko.idea.minibatis.model.sqlmap.Sql;
-import net.ishchenko.idea.minibatis.util.JavaUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +57,7 @@ public class WherePropertyParmaReferenceContributor extends PsiReferenceContribu
 					if (sql == null || sql.getId() == null || sql.getId().getXmlAttributeValue() == null) {
 						return PsiReference.EMPTY_ARRAY;
 					}
-					Query<PsiReference> psiReferences = ReferencesSearch.search(sql.getId().getXmlAttributeValue(), GlobalSearchScope.projectScope(project));
+					Query<PsiReference> psiReferences = ReferencesSearch.search(sql.getId().getXmlAttributeValue(), GlobalSearchScope.fileScope(element.getContainingFile()));
 					Collection<PsiReference> psiReferenceCollection = psiReferences.findAll();
 					for (PsiReference psiReference : psiReferenceCollection) { // 引用sql的地方
 						PsiElement psiElement = psiReference.getElement();
@@ -77,7 +69,7 @@ public class WherePropertyParmaReferenceContributor extends PsiReferenceContribu
 						}
 					}
 				}
-				if (groupTwo == null) {
+				if (groupTwo == null || groupTwo.getParameterClass().getValue() == null) {
 					return PsiReference.EMPTY_ARRAY;
 				}
 				return new PsiReference[]{new HashMarkReference(element, groupTwo, text)};
@@ -106,42 +98,11 @@ public class WherePropertyParmaReferenceContributor extends PsiReferenceContribu
 		}
 
 		private PsiField m1(Project project, GroupTwo groupTwo, String value) {
-			XmlAttributeValue xmlAttributeValue = groupTwo.getId().getXmlAttributeValue();
-			if (xmlAttributeValue == null) {
-				return null;
-			}
-			Query<PsiReference> psiReferences = ReferencesSearch.search(xmlAttributeValue, GlobalSearchScope.projectScope(project));
-			Collection<PsiReference> methodBody = psiReferences.findAll();
-			for (PsiReference psiReference : methodBody) {
-				PsiElement element = psiReference.getElement();
-				PsiExpressionList psiExpressionList = PsiTreeUtil.getParentOfType(element, PsiExpressionList.class, true);
-				if (psiExpressionList == null) {
-					return null;
-				}
-				PsiExpression[] expressions = psiExpressionList.getExpressions();
-				if (ArrayUtils.isEmpty(expressions)) {
-					return null;
-				}
-				for (PsiExpression expression : expressions) {
-					if (expression instanceof PsiReferenceExpression) {
-						PsiType type = expression.getType();
-						if (type instanceof PsiClassReferenceType) {
-							String className = type.getCanonicalText();
-							PsiClass clazz = JavaUtils.findClazz(project, className);
-							if (clazz == null) {
-								return null;
-							}
-							PsiField[] allFields = clazz.getAllFields();
-							for (PsiField psiField : allFields) {
-								if (IbatisConstant.SERIAL_VERSION_UID.equals(psiField.getName())) {
-									continue;
-								}
-								if (StringUtils.equals(value, psiField.getName())) {
-									return psiField;
-								}
-							}
-						}
-					}
+			PsiClass psiClass = groupTwo.getParameterClass().getValue();
+			PsiField[] allFields = psiClass.getAllFields();
+			for (PsiField psiField : allFields) {
+				if (StringUtils.equals(value, psiField.getName())) {
+					return psiField;
 				}
 			}
 			return null;
