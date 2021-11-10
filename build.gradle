@@ -57,7 +57,7 @@ intellij {
     //Disables updating since-build attribute in plugin.xml
     updateSinceUntilBuild false
     downloadSources false
-    localPath 'D:/dev/ideaIU-2020.2.3.win'
+    localPath 'D:/dev/ideaIU-2020.3.win'
 }
 
 processResources {

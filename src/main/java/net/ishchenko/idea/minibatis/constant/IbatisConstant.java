@@ -13,4 +13,8 @@ public class IbatisConstant {
 	public static final String SERIAL_VERSION_UID = "serialVersionUID";
 
 	public static final String PROPERTY = "property";
+
+	public static final String JAVA_LANG = "java.lang";
+
+	public static final String JAVA_UTIL = "java.util";
 }

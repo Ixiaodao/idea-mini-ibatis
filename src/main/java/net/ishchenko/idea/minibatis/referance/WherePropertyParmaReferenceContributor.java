@@ -37,6 +37,7 @@ import java.util.Collection;
 public class WherePropertyParmaReferenceContributor extends PsiReferenceContributor {
 	public static final PsiElementPattern.Capture<PsiElement> EL_VAR_COMMENT = PlatformPatterns.psiElement(PsiElement.class)
 			.inside(XmlPatterns.xmlTag().withName(IbatisConstant.ARR)).inside(XmlPatterns.xmlAttribute().withName(IbatisConstant.PROPERTY));
+
 	@Override
 	public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
 		registrar.registerReferenceProvider(EL_VAR_COMMENT, new PsiReferenceProvider() {
@@ -70,6 +71,10 @@ public class WherePropertyParmaReferenceContributor extends PsiReferenceContribu
 					}
 				}
 				if (groupTwo == null || groupTwo.getParameterClass().getValue() == null) {
+					return PsiReference.EMPTY_ARRAY;
+				}
+				String qualifiedName = groupTwo.getParameterClass().getValue().getQualifiedName();
+				if (qualifiedName == null || qualifiedName.startsWith(IbatisConstant.JAVA_LANG) || qualifiedName.startsWith(IbatisConstant.JAVA_UTIL)) {
 					return PsiReference.EMPTY_ARRAY;
 				}
 				return new PsiReference[]{new HashMarkReference(element, groupTwo, text)};
