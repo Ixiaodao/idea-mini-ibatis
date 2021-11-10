@@ -92,6 +92,9 @@ public class WherePropertyParamContributor extends CompletionContributor {
         }
         PsiField[] allFields = psiClass.getAllFields();
         for (PsiField psiField : allFields) {
+            if (IbatisConstant.SERIAL_VERSION_UID.equals(psiField.getName())) {
+                continue;
+            }
             addFieldTip(result, psiField);
         }
         result.stopHere();
